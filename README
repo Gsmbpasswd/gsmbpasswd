@@ -1,3 +1,19 @@
+gsmbpasswd is a web server daemon that provides SMB users the possibility to 
+change their passwords, and consists of two python programs: gsmbpasswd-http 
+and gsmbpasswd-https.
+
+gsmbpasswd-http forces a client to use SSL/TLS connections by redirection. 
+gsmbpasswd-https employs two external components: pysmb, a Python implementation 
+of the client-side SMB/CIFS protocol, and smbpasswd. The former is to authenticate 
+a SMB user by checking username and password, while the latter is to change a user's 
+password. The configuration file and the default configuration file are reloaded
+only by restarting the daemon.
+
+Both of the programs along with smbpasswd are run as the unprivileged user, gsmbpasswd. 
+At first, gsmbpasswd authenticates the user with help of the pysmb library. To provide 
+defence in depth, a second layer of authentication is also used when communicating with 
+the SMB server with the option -U for smbpasswd.
+
 Installation note regarding fail2ban:
 If the log-file /var/log/gsmbpasswd/gsmbpasswd.log is not present when starting 
 fail2ban then no parsing of the log-file will be done and hence no blocking.
