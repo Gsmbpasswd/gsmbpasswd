@@ -1,0 +1,53 @@
+/* ::::: https://cas.ki.se/main-18px.css ::::: */
+
+html, body, div, span, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, address, cite, code, del, dfn, em, img, ins, kbd, q, samp, small, strong, sub, sup, var, b, i, hr, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, figure, figcaption, hgroup, menu, footer, header, nav, section, summary, time, mark, audio, video { margin: 0px; padding: 0px; border: 0px none; }
+.bigger, h3 { font-size: 24px; line-height: 28px; margin-bottom: 16px; }
+.big, h4 { font-size: 18px; line-height: 22px; }
+body { font: 14px/20px Arial,Times,serif; }
+.small, small { font-size: 13px; line-height: 18px; }
+*::-moz-selection { background: none repeat scroll 0% 0% rgb(255, 255, 158); }
+img::-moz-selection { background: none repeat scroll 0% 0% transparent; }
+body {  }
+a, a:active, a:hover, a:visited { color: rgb(212, 9, 99); }
+#loginform { width: 220px; margin: 10px 0px; }
+input { font-size: 16px; height: 25px; width: 220px; margin-bottom: 10px; }
+input[type="submit"] { background: none repeat scroll 0% 0% rgb(0, 0, 0); border: 0px none; padding: 10px 0px; height: 38px; margin-bottom: 10px; border-radius: 8px; color: rgb(255, 255, 255); font-size: 14px; font-family: Arial,sans-serif; text-decoration: none; vertical-align: middle; text-align: center; }
+body { width: 896px; padding: 72px 48px 84px; background: none repeat scroll 0% 0% rgb(255, 255, 255); color: rgb(60, 60, 60); }
+#top-bar { position: absolute; top: 0px; left: 0px; z-index: 999; width: 100%; min-height: 60px; background-color: rgb(0, 0, 0); color: rgb(255, 255, 255); }
+#top-bar-inner { width: 1000px; margin: auto; height: 100px; background-repeat: no-repeat; background-position: center; }
+#top-bar-inner h3 { padding-left: 100px; top: 30px; padding-top: 10px; padding-bottom: 10px; position: absolute; }
+#content { width: 100%; position: absolute; top: 120px; left: 0px; }
+#wrapper { width: 896px; margin: auto; }
+#login { width: 528px; float: left; margin-bottom: 30px; }
+#meny { width: 344px; float: right; margin-bottom: 20px; margin-top: 40px; }
+#footer { clear: both; color: rgb(102, 102, 102); font-size: 12px; padding-top: 10px; border-top: 1px solid rgb(184, 184, 184); text-align: center; min-height: 70px; }
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+	body { width: 712px; padding: 48px 28px 60px; }
+	#top-bar-inner { width: 712px; background-position: left center; }
+	#top-bar-inner h4 { padding-left: 100px; top: 30px; padding-top: 10px; padding-bottom: 10px; position: absolute; }
+	#wrapper { width: 712px; margin: auto; }
+	#login { width: 436px; float: left; }
+	#meny { width: 252px; float: right; }
+}
+@media only screen and (max-width: 767px) {
+	body { width: 252px; padding: 48px 34px 60px; }
+	#top-bar-inner { width: 252px; margin: auto; height: 80px; background-repeat: no-repeat; background-position: center; }
+	#top-bar-inner h4 { padding-left: 70px; top: 8px; padding-top: 10px; padding-bottom: 10px; position: absolute; }
+	#wrapper { width: 252px; margin: auto; }
+	#login { width: 252px; float: left; }
+	#meny { width: 252px; float: right; margin-top: 0px; }
+	#content { top: 90px; }
+	input { width: 100%; }
+}
+@media only screen and (min-width: 480px) and (max-width: 767px) {
+	body { width: 436px; padding: 36px 22px 48px; }
+	#top-bar-inner { width: 436px; margin: auto; height: 80px; background-repeat: no-repeat; background-position: center; }
+	#top-bar-inner h4 { padding-left: 80px; top: 20px; padding-top: 10px; padding-bottom: 10px; position: absolute; }
+	#wrapper { width: 436px; margin: auto; }
+	#login { width: 252px; float: left; }
+	#meny { width: 160px; float: right; margin-top: 60px; }
+	input { width: 100%; }
+}
+@media not all, not all {
+	body {  }
+}

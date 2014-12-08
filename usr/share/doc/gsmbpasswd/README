@@ -1,0 +1,68 @@
+Installation note regarding fail2ban:
+If the log-file /var/log/gsmbpasswd/gsmbpasswd.log is not present when starting 
+fail2ban then no parsing of the log-file will be done and hence no blocking.
+Therefore first start the gsmbpasswd service and afterwards the fail2ban service
+to ensure proper functionality of fail2ban.
+
+Recommended installation paths and permissions:
+
+[config]
+drwxr-xr-x 2 root gsmbpasswd
+/etc/gsmbpasswd
+
+-rw-r--r-- 1 root gsmbpasswd
+/etc/gsmbpasswd/gsmbpasswd.conf
+/etc/gsmbpasswd/gsmbpasswd-html.conf
+/etc/gsmbpasswd/gsmbpasswd-messages.conf
+
+[program] 
+-rwxr-xr-- 1 gsmbpasswd gsmbpasswd
+/usr/sbin/gsmbpasswd-https.py
+/usr/sbin/gsmbpasswd-http.py
+
+[html & static]
+drwxr-xr-x 3 root root
+/etc/gsmbpasswd
+
+/etc/gsmbpasswd/public/templates/index.html
+/etc/gsmbpasswd/public/static/favicon.ico
+/etc/gsmbpasswd/public/static/index.css
+/etc/gsmbpasswd/public/static/logo2.png
+/etc/gsmbpasswd/public/static/logo100.png
+/etc/gsmbpasswd/public/static/logo_en.png
+/etc/gsmbpasswd/public/static/logo_sv.png
+
+[init]
+-rwxr-xr-- 1 root root
+/etc/init.d/gsmbpasswd
+
+[README]
+/usr/share/doc/gsmbpasswd/README
+
+[session]
+drwxrwx--- 2 root gsmbpasswd
+/var/run/gsmbpasswd/sessions
+
+-rw-r--r-- 1 root root
+/var/run/gsmbpasswd/gsmbpasswd-http.pid
+/var/run/gsmbpasswd/gsmbpasswd-https.pid
+
+[log]
+drwxrwxr-x 2 root gsmbpasswd
+/var/log/gsmbpasswd
+
+-rw-r--r-- 1 gsmbpasswd gsmbpasswd
+/var/log/gsmbpasswd/gsmbpasswd.log
+
+[ssl]
+drwxr-xr-x 2 root gsmbpasswd
+/etc/gsmbpasswd/certs
+
+-rw-r--r-- 1 root root
+/etc/gsmbpasswd/certs/changeme.lime.ki.se_cert.pem
+
+drwxr-x--- 2 root gsmbpasswd
+/etc/gsmbpasswd/private
+
+-rw-r----- 1 root gsmbpasswd 
+/etc/gsmbpasswd/private/changeme.lime.ki.se_private.pem

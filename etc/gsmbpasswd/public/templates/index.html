@@ -1,0 +1,67 @@
+$def with (result, args)
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="icon" type="image/png" href="static/favicon.ico">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <title>$args['organization']</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+        <!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
+
+        <link rel="stylesheet" type="text/css" href="static/index.css" media="all">
+    </head>
+    <body>
+        <div id="top-bar">
+            <div id="top-bar-inner"><h3>$args['organization']</h3></div>
+        </div>
+        <div id="content">
+            <div id="wrapper">
+                <p align="right"><img src="$args['link_img']" width=25 alt="" border="1"><a href="$args['link_url']">$args['link_name']</a></p><h3>$args['message']</h3>
+                <div id="login">
+                    <form action="/" method="post" id="loginform" name="loginform">
+                        <input type="hidden" name="csrf_token" value="$csrf_token()"/>
+                        <label class="small" for="username">$args['username']:</label>
+                        <p>
+                            <input id="username" type="text" required="" autocorrect="off" autocapitalize="off" autocomplete="on" autofocus="" value="" name="username" original-title="">
+                        </p>
+                        <label class="small" for="password">$args['current_password']:</label>
+                        <p>
+                            <input id="password" type="password" required="" autocorrect="off" autocapitalize="off" autocomplete="on" value="" name="current_password" original-title="">
+                        </p>
+                        <label class="small" for="password">$args['new_password']:</label>
+                        <p>
+                            <input id="password" type="password" required="" autocorrect="off" autocapitalize="off" autocomplete="on" value="" name="new_password" original-title="">
+                        </p>
+                        <label class="small" for="password">$args['confirm_password']:</label>
+                        <p>
+                            <input id="password" type="password" required="" autocorrect="off" autocapitalize="off" autocomplete="on" value="" name="new_password_second" original-title="">
+                        </p>
+                        <p>
+                            <input id="submit" value="$args['submit']" class="submitbutton" type="submit">
+                        </p>
+                    </form>
+                </div>
+
+                <div id="meny">
+                    $if not result == None:
+                        <h4>$result</h4>
+                    $else:
+                        $args['information']
+                    <br>
+                    <br>
+                    <strong>$args['contact_dep']:</strong><br>
+                    <br>
+                    $args['contact_person']<br> 
+                    $args['contact_person_2']<br>
+                    <a href="mailto:$args['email']">$args['email']</a>
+                </div>
+
+                <div id="footer">
+                    <!--p>© Karolinska Institutet, 171 77 Stockholm | Tel: 08-524 800 00 Fax: 08-31 11 01 | <a style="text-decoration: none; color: rgb(102, 102, 102);" href="mailto:info@ki.se">info@ki.se</a></p-->
+                </div>
+            </div>
+        </div>
+    </body>
+</html>

@@ -1,0 +1,60 @@
+#!/bin/bash
+
+# This is test installing file for gsmbpasswd.
+# Måste fortsätta med ägare och rättigheter
+set -e
+
+# Install the necessary packets
+apt-get -y update
+apt-get -y dist-upgrade
+apt-get -y install samba-common-bin python-dev python-setuptools python-pip \
+python-webpy python-openssl
+pip install -U pip
+/usr/local/bin/pip install subprocess32 pysmb
+
+# Iptables
+iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 8080
+iptables -t nat -A PREROUTING -p tcp -m tcp --dport 443 -j REDIRECT --to-ports 8443
+iptables -A INPUT -p tcp -m tcp --dport 8080 -j ACCEPT
+iptables -A INPUT -p tcp -m tcp --dport 8443 -j ACCEPT
+
+# Create system user
+adduser --system --disabled-password --group gsmbpasswd --home /var/run/gsmbpasswd --gecos ""
+
+# Create sslcertificate och its key
+openssl genrsa -out dummy.examples.org_private.key 2048
+echo -e "\n\n\n\n\n\n" | openssl req -verbose -new -x509 -days 365 -sha256 -key dummy.examples.org_private.key -out  dummy.examples.org_cert.pem
+
+mkdir -m 755 /etc/gsmbpasswd/certs
+mkdir -m 750 /etc/gsmbpasswd/private
+mv dummy.examples.org_cert.pem /etc/gsmbpasswd/certs/
+mv dummy.examples.org_private.key /etc/gsmbpasswd/private/
+chmod 640 /etc/gsmbpasswd/private/dummy.examples.org_private.key
+chown -R root:gsmbpasswd /etc/gsmbpasswd/private
+chown -R root:gsmbpasswd /etc/gsmbpasswd/certs
+
+# Create log directory
+mkdir -m 775 /var/log/gsmbpasswd
+chown -R root:gsmbpasswd /var/log/gsmbpasswd
+
+# move 
+tar -xzvf gsmbpasswd*.tgz
+mv gsmbpasswd/etc/default/gsmbpasswd  /etc/default/
+mkdir -m 775 /etc/gsmbpasswd
+mv gsmbpasswd/etc/gsmbpasswd/gsmbpasswd.conf /etc/gsmbpasswd/
+mv gsmbpasswd/etc/gsmbpasswd/gsmbpasswd-html.conf /etc/gsmbpasswd/
+mv gsmbpasswd/etc/gsmbpasswd/gsmbpasswd-messages.conf /etc/gsmbpasswd/
+mv gsmbpasswd/etc/gsmbpasswd/public /etc/gsmbpasswd/
+chown -R root:gsmbpasswd /etc/gsmbpasswd
+mv gsmbpasswd/etc/init.d/gsmbpasswd /etc/init.d/
+chown -R root:root /etc/init.d/gsmbpasswd
+mv gsmbpasswd/usr/sbin/gsmbpasswd-http.py /usr/sbin/
+mv gsmbpasswd/usr/sbin/gsmbpasswd-https.py /usr/sbin/
+chmod 754 /usr/sbin/gsmbpasswd*.py
+chown gsmbpasswd:gsmbpasswd /usr/sbin/gsmbpasswd*.py
+mkdir -m 755 /usr/share/doc/gsmbpasswd
+mv gsmbpasswd/usr/share/doc/gsmbpasswd/README /usr/share/doc/gsmbpasswd/
+mkdir -m 755 /usr/share/gsmbpasswd
+chown -R root:root /usr/share/doc/gsmbpasswd
+
+echo Installation Complete.  

@@ -1,0 +1,10 @@
+# This file makes gsmbpasswd use alternative ports.
+
+# If you change ports from the default ones, set to "true"
+MODIFY_IPTABLES=false
+
+# Do NOT use TCP ports lower than 1024 so that the system user 
+# (gsmbpasswd) can run the programs. Make sure to redirect port 
+# 80 and 443 to those ports with netfilter.  
+PORT_HTTP=8080
+PORT_HTTPS=8443

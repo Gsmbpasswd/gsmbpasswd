@@ -1,0 +1,195 @@
+#!/bin/sh
+
+### BEGIN INIT INFO
+# Provides:        gsmbpasswd
+# Required-Start:  $remote_fs $network
+# Required-Stop:   $remote_fs $network
+# Default-Start:   2 3 4 5
+# Default-Stop: 
+# Short-Description: Start gsmbpasswd daemon
+### END INIT INFO
+
+# Turn on "hash randomization", so that the hash() values of  str,
+# bytes  and  datetime  objects are "salted" with an unpredictable
+# pseudo-random value to avoid a possible DOS-attack.
+# For more info: http://www.ocert.org/advisories/ocert-2011-003.html
+export PYTHONHASHSEED=random
+
+. /lib/lsb/init-functions
+
+NAME=gsmbpasswd
+DAEMON_HTTP=/usr/sbin/gsmbpasswd-http.py
+DAEMON_HTTPS=/usr/sbin/gsmbpasswd-https.py
+ROOTDIR=/var/run/gsmbpasswd
+PIDDIR=/var/run/gsmbpasswd
+PIDFILE_HTTP=$PIDDIR/gsmbpasswd-http.pid
+PIDFILE_HTTPS=$PIDDIR/gsmbpasswd-https.pid
+RUNASUSER=gsmbpasswd
+PORT_HTTP=8080
+PORT_HTTPS=8443
+CURRENT_PORT_HTTP=`iptables-save | grep "dport 80 -j REDIRECT" | cut -d" " -f12`
+CURRENT_PORT_HTTPS=`iptables-save | grep "dport 443 -j REDIRECT" | cut -d" " -f12`
+MODIFY_IPTABLES=false
+SERVICE_SUCCESS=false
+
+# Exit if the package is not installed
+[ -x "$DAEMON_HTTP" ] || exit 0
+
+[ -x "$DAEMON_HTTPS" ] || exit 0
+
+# Read configuration variable file
+[ -r /etc/default/$NAME ] && . /etc/default/$NAME
+
+check_privsep_dir() {
+    # Create the PrivSep empty dir if necessary
+    if [ ! -d $PIDDIR ]
+    then
+        mkdir -p $PIDDIR/sessions
+        ln -s /etc/gsmbpasswd/public/static $ROOTDIR/static
+    else
+        if [ ! -d $PIDDIR/sessions ]
+        then    
+            mkdir $PIDDIR/sessions
+        fi        
+        if [ ! -L $ROOTDIR/static ]  
+        then
+            ln -s /etc/gsmbpasswd/public/static $ROOTDIR/static
+        fi
+    fi
+    
+    # Whether or not the directory existed before or was created above
+    # make sure that directories have the right permissions and owners.
+    chown -R root:gsmbpasswd $PIDDIR
+    chmod 0755 $PIDDIR
+    chmod 0770 $PIDDIR/sessions
+}
+
+add_firewall_rules() {
+    if [ $MODIFY_IPTABLES = true -a $SERVICE_SUCCESS = true ]
+    then
+        # Redirect ports 80 and 443 to ports higher than 1024
+        if [ $(iptables-save | grep -c "\-A PREROUTING \-p tcp \-m tcp \-\-dport 80 \-j REDIRECT \-\-to-ports $PORT_HTTP") -eq 0 ]
+        then
+            iptables -t nat -I PREROUTING -p tcp -m tcp --dport 80 \
+            -j REDIRECT --to-ports $PORT_HTTP
+        fi
+        if [ $(iptables-save | grep -c "\-A PREROUTING \-p tcp \-m tcp \-\-dport 443 \-j REDIRECT \-\-to-ports $PORT_HTTPS") -eq 0 ]
+        then
+            iptables -t nat -I PREROUTING -p tcp -m tcp --dport 443 \
+            -j REDIRECT --to-ports $PORT_HTTPS
+        fi
+        #if [ $(iptables-save | grep -c "\-A INPUT \-p tcp \-m tcp \-\-dport $PORT_HTTP \-j ACCEPT") -eq 0 ]
+        #then
+        #    iptables -I INPUT -p tcp -m tcp --dport $PORT_HTTP -j ACCEPT
+        #fi
+        #if [ $(iptables-save | grep -c "\-A INPUT \-p tcp \-m tcp \-\-dport $PORT_HTTPS \-j ACCEPT") -eq 0 ]
+        #then
+        #    iptables -I INPUT -p tcp -m tcp --dport $PORT_HTTPS -j ACCEPT
+        #fi
+    elif [ $MODIFY_IPTABLES = false -a $SERVICE_SUCCESS = true ]
+    then
+        log_warning_msg "You should change your iptables manually."
+    fi
+}
+
+start_https() {
+    if [ ! -f $PIDFILE_HTTPS ]
+    then
+        log_daemon_msg "Starting gsmbpasswd-https server"
+        start-stop-daemon --start --make-pidfile --background --quiet --oknodo --user $RUNASUSER --pidfile $PIDFILE_HTTPS --startas $DAEMON_HTTPS --chuid $RUNASUSER --chdir $ROOTDIR -- $PORT_HTTPS
+        log_end_msg $?
+    else 
+        log_failure_msg "gsmbpasswd-https is already running"
+    fi
+}
+
+start_http() {
+    if [ ! -f $PIDFILE_HTTP ]
+    then
+        log_daemon_msg "Starting gsmbpasswd-http server"
+        start-stop-daemon --start --make-pidfile --background --quiet --oknodo --user $RUNASUSER --pidfile $PIDFILE_HTTP --startas $DAEMON_HTTP --chuid $RUNASUSER --chdir $ROOTDIR -- $PORT_HTTP  
+        log_end_msg $?
+        SERVICE_SUCCESS=true
+    else
+        log_failure_msg "gsmbpasswd-http is already running"
+        SERVICE_SUCCESS=false
+    fi
+}
+
+# Remove redirection of port 80 and 443 to ports higher than 1024 
+remove_firewall_rules() {
+    if [ $MODIFY_IPTABLES = true ]
+    then 
+        if [ ! -z "$CURRENT_PORT_HTTP" ]
+        then
+            iptables -t nat -D PREROUTING -p tcp -m tcp --dport 80 \
+            -j REDIRECT --to-ports $CURRENT_PORT_HTTP
+            iptables -D INPUT -p tcp -m tcp --dport $CURRENT_PORT_HTTP -j ACCEPT
+        fi
+        if [ ! -z "$CURRENT_PORT_HTTPS" ]
+        then
+            iptables -t nat -D PREROUTING -p tcp -m tcp --dport 443 \
+            -j REDIRECT --to-ports $CURRENT_PORT_HTTPS
+            iptables -D INPUT -p tcp -m tcp --dport $CURRENT_PORT_HTTPS -j ACCEPT
+        fi
+    else 
+        log_warning_msg "You should change your iptables manually."
+    fi
+}
+
+stop_https() {
+    if [ -f $PIDFILE_HTTPS ]    
+    then
+        log_daemon_msg "Stopping gsmbpasswd-https server"
+        start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE_HTTPS 
+        log_end_msg $?
+    else
+        log_failure_msg "gsmbpasswd-https was not running"
+    fi
+}
+
+stop_http() {
+    if [ -f $PIDFILE_HTTP ]    
+    then
+        log_daemon_msg "Stopping gsmbpasswd-http server"
+        start-stop-daemon --stop --quiet --oknodo --pidfile $PIDFILE_HTTP
+        log_end_msg $?
+    else
+        log_failure_msg "gsmbpasswd-https was not running"
+    fi
+}
+
+case $1 in
+    start)
+        check_privsep_dir 
+        start_https
+        start_http
+        add_firewall_rules
+        ;;
+    stop)
+        stop_http
+        stop_https
+        remove_firewall_rules
+        rm -f $PIDFILE_HTTP $PIDFILE_HTTPS
+        ;;
+    restart|force-reload)
+        stop_http
+        stop_https
+        remove_firewall_rules
+        rm -f $PIDFILE_HTTP $PIDFILE_HTTPS
+        
+        check_privsep_dir 
+        start_https
+        start_http
+        add_firewall_rules
+        ;;
+    status)
+        status_of_proc -p $PIDFILE_HTTPS $DAEMON_HTTPS gsmbpasswd-https 
+        status_of_proc -p $PIDFILE_HTTP $DAEMON_HTTP gsmbpasswd-http 
+        ;;
+
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 2
+        ;;
+esac
