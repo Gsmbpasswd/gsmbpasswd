@@ -18,7 +18,8 @@ $def with (result, args)
         </div>
         <div id="content">
             <div id="wrapper">
-                <p align="right"><img src="$args['link_img']" width=25 alt="" border="1"><a href="$args['link_url']">$args['link_name']</a></p><h3>$args['message']</h3>
+                <p align="right"><img src="$args['link_img']" width=25 alt="" border="1">
+                <a href="$args['link_url']">$args['link_name']</a></p><h3>$args['message']</h3>
                 <div id="login">
                     <form action="/" method="post" id="loginform" name="loginform">
                         <input type="hidden" name="csrf_token" value="$csrf_token()"/>
@@ -59,7 +60,6 @@ $def with (result, args)
                 </div>
 
                 <div id="footer">
-                    <!--p>© Karolinska Institutet, 171 77 Stockholm | Tel: 08-524 800 00 Fax: 08-31 11 01 | <a style="text-decoration: none; color: rgb(102, 102, 102);" href="mailto:info@ki.se">info@ki.se</a></p-->
                 </div>
             </div>
         </div>

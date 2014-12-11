@@ -20,63 +20,52 @@ fail2ban then no parsing of the log-file will be done and hence no blocking.
 Therefore first start the gsmbpasswd service and afterwards the fail2ban service
 to ensure proper functionality of fail2ban.
 
-Recommended installation paths and permissions:
+.
+├── etc
+│   ├── default
+│   │   └── gsmbpasswd
+│   ├── gsmbpasswd
+│   │   ├── gsmbpasswd.conf
+│   │   ├── gsmbpasswd-html.conf
+│   │   ├── gsmbpasswd-messages.conf
+│   │   └── public
+│   │       ├── static
+│   │       │   ├── favicon.ico
+│   │       │   ├── index.css
+│   │       │   ├── logo_en.png
+│   │       │   └── logo_sv.png
+│   │       └── templates
+│   │           └── index.html
+│   └── init.d
+│       └── gsmbpasswd
+├── gsmbpasswd_install
+├── README
+└── usr
+    ├── sbin
+    │   ├── gsmbpasswd-http.py
+    │   └── gsmbpasswd-https.py
+    └── share
+        ├── doc
+        │   └── gsmbpasswd
+        │       ├── examples
+        │       │   ├── apparmor.d
+        │       │   │   ├── usr.sbin.gsmbpasswd-http.py
+        │       │   │   └── usr.sbin.gsmbpasswd-https.py
+        │       │   └── fail2ban
+        │       │       ├── filter.d
+        │       │       │   ├── gsmbpasswd-auth.conf
+        │       │       │   └── gsmbpasswd-mal.conf
+        │       │       └── jail.local
+        │       └── permissions 
+        ├── man
+        │   ├── man5
+        │   │   └── gsmbpasswd.conf.5
+        │   ├── man7
+        │   │   └── gsmbpasswd.7
+        │   └── man8
+        │       ├── gsmbpasswd-http.py.8
+        │       └── gsmbpasswd-https.py.8
+        └── pyshared
+            └── web
+                └── httpserver.py
 
-[config]
-drwxr-xr-x root gsmbpasswd
-/etc/gsmbpasswd
-
--rw-r--r-- root gsmbpasswd
-/etc/gsmbpasswd/gsmbpasswd.conf
-/etc/gsmbpasswd/gsmbpasswd-html.conf
-/etc/gsmbpasswd/gsmbpasswd-messages.conf
-
-[program] 
--rwxr-xr-- gsmbpasswd gsmbpasswd
-/usr/sbin/gsmbpasswd-https.py
-/usr/sbin/gsmbpasswd-http.py
-
-[html & static]
-drwxr-xr-x root root
-/etc/gsmbpasswd
-
-/etc/gsmbpasswd/public/templates/index.html
-/etc/gsmbpasswd/public/static/favicon.ico
-/etc/gsmbpasswd/public/static/index.css
-/etc/gsmbpasswd/public/static/logo_en.png
-/etc/gsmbpasswd/public/static/logo_sv.png
-
-[init]
--rwxr-xr-- root root
-/etc/init.d/gsmbpasswd
-
-[README]
-/usr/share/doc/gsmbpasswd/README
-
-[session]
-drwxrwx--- root gsmbpasswd
-/var/run/gsmbpasswd/sessions
-
--rw-r--r-- root root
-/var/run/gsmbpasswd/gsmbpasswd-http.pid
-/var/run/gsmbpasswd/gsmbpasswd-https.pid
-
-[log]
-drwxrwxr-x root gsmbpasswd
-/var/log/gsmbpasswd
-
--rw-r--r-- gsmbpasswd gsmbpasswd
-/var/log/gsmbpasswd/gsmbpasswd.log
-
-[ssl]
-drwxr-xr-x root gsmbpasswd
-/etc/gsmbpasswd/certs
-
--rw-r--r-- root root
-/etc/gsmbpasswd/certs/dummy.examples.com_cert.pem
-
-drwxr-x--- root gsmbpasswd
-/etc/gsmbpasswd/private
-
--rw-r----- root gsmbpasswd 
-/etc/gsmbpasswd/private/dummy.examples.com_private.pem
