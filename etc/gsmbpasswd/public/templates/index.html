@@ -6,10 +6,7 @@ $def with (result, args)
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta charset="utf-8">
         <title>$args['organization']</title>
-
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-        <!-- Adding "maximum-scale=1" fixes the Mobile Safari auto-zoom bug: http://filamentgroup.com/examples/iosScaleBug/ -->
-
         <link rel="stylesheet" type="text/css" href="static/index.css" media="all">
     </head>
     <body>
@@ -18,8 +15,8 @@ $def with (result, args)
         </div>
         <div id="content">
             <div id="wrapper">
-                <p align="right"><img src="$args['link_img']" width=25 alt="" border="1">
-                <a href="$args['link_url']">$args['link_name']</a></p><h3>$args['message']</h3>
+                <a href="$args['link_url']"><p align="right"><img src="$args['link_img']" width="25px" height="20px" alt="$args['link_name']"></img>$args['link_name']</a></p>
+                <h3>$args['message']</h3>
                 <div id="login">
                     <form action="/" method="post" id="loginform" name="loginform">
                         <input type="hidden" name="csrf_token" value="$csrf_token()"/>
